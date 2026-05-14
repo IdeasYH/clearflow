@@ -1,45 +1,47 @@
 # ClearFlow
 
-ClearFlow is a guided development workflow skill for Codex. It helps you turn unclear ideas into precise code and debuggable systems through clear scope, BDD, test strategy, architecture decisions, observability, implementation handoff, review, regression capture, and progress recovery.
+[English](README.en.md)
 
-Core idea:
+ClearFlow 是一个面向 Codex 的引导式开发工作流 skill。它通过清晰范围、BDD、测试策略、架构决策、可观测性、实现交接、审查、回归沉淀和进度恢复，把模糊想法转成更精准的代码和更容易 debug 的系统。
+
+核心思想：
 
 ```text
-Tests are executable requirements.
-Logs are debugging evidence.
-Progress is recovery context.
+测试是可执行需求。
+日志是定位证据。
+Progress 是恢复上下文。
 ```
 
-ClearFlow is not a replacement for coding skills, project instructions, or superpowers. It is a workflow guide that helps the user make key decisions and gives the agent structured artifacts to work from.
+ClearFlow 不是编码能力、项目说明或 superpowers 的替代品。它是一个流程向导：帮助使用者做关键判断，并给 Agent 提供结构化产物。
 
-## When To Use
+## 什么时候使用
 
-Use ClearFlow when you want to:
+当你想做这些事情时，使用 ClearFlow：
 
-- Start a new feature with clear scope.
-- Convert natural language requirements into PRD / BDD.
-- Generate P0 / P1 / P2 test strategy.
-- Design logs and debug artifacts before implementation.
-- Prepare a handoff for a detailed superpowers implementation plan.
-- Review a diff before PR with scope, tests, logs, and regression in mind.
-- Fix bugs with reproduction, regression tests, and progress recovery.
+- 从清晰范围开始规划新功能。
+- 把自然语言需求转换成 PRD / BDD。
+- 生成 P0 / P1 / P2 测试策略。
+- 在实现前设计日志和 debug artifacts。
+- 为 superpowers 的详细实现计划准备交接材料。
+- 在 PR 前从范围、测试、日志和回归角度审查 diff。
+- 用复现、回归测试和进度恢复来修 Bug。
 
-Example:
+示例：
 
 ```text
 $clearflow 带我从 Brief 开始做一个文生图功能。
 ```
 
-Another example:
+另一个示例：
 
 ```text
 $clearflow 把下面这个需求转成 PRD / BDD，并生成测试策略：
 用户可以输入提示词生成一张图片，失败时要能定位失败阶段。
 ```
 
-## Workflow
+## 工作流
 
-Default feature workflow:
+默认新功能流程：
 
 ```text
 1. Brief
@@ -51,7 +53,7 @@ Default feature workflow:
 7. Pre-PR Review / Regression Capture / Progress
 ```
 
-Bug fix workflow:
+Bug 修复流程：
 
 ```text
 1. Brief
@@ -61,7 +63,7 @@ Bug fix workflow:
 5. Progress
 ```
 
-For complex projects, ClearFlow can expand the combined stages:
+复杂项目可以展开组合阶段：
 
 ```text
 1. Brief
@@ -76,144 +78,144 @@ For complex projects, ClearFlow can expand the combined stages:
 10. Progress
 ```
 
-## Stage 1: Brief
+## 阶段 1：Brief
 
-### What It Does
+### 做什么
 
-Brief defines the work boundary:
+Brief 定义工作边界：
 
-- What this project or feature will do.
-- What it will not do.
-- What success means.
-- What risks are known.
-- Which decisions still need the user.
+- 这个项目或功能要做什么。
+- 不做什么。
+- 成功标准是什么。
+- 已知风险有哪些。
+- 还有哪些决策需要使用者确认。
 
-### Why It Exists
+### 为什么做
 
-AI coding goes wrong when scope is vague. The agent may implement extra behavior, skip important constraints, or make hidden assumptions. Brief prevents this by making the work boundary explicit before planning or coding.
+AI 编码经常出问题，是因为范围模糊。Agent 可能多做、不做关键约束，或者偷偷做假设。Brief 在计划和编码前把边界写清楚。
 
-### Example
+### 示例
 
 ```md
-# Brief: Text-to-Image MVP
+# Brief: 文生图 MVP
 
 ## Scope
 
-- User enters a prompt.
-- System creates one image.
-- System stores the image URL and generation status.
-- User can see success or failure result.
+- 用户输入提示词。
+- 系统生成一张图片。
+- 系统保存图片 URL 和生成状态。
+- 用户可以看到成功或失败结果。
 
 ## Non-Scope
 
-- Multi-image generation.
-- Image editing.
-- Prompt history.
-- Payment limits.
+- 多图生成。
+- 图片编辑。
+- 提示词历史。
+- 付费额度。
 
 ## Success Criteria
 
-- A valid prompt creates one image.
-- Failed generation records a clear failure stage and error code.
-- P0 tests pass.
+- 有效提示词能生成一张图片。
+- 生成失败时记录明确的失败阶段和错误码。
+- P0 测试通过。
 
 ## Risks
 
-- OpenAI API failure.
-- Image save failure.
-- Database state inconsistency.
+- OpenAI API 失败。
+- 图片保存失败。
+- 数据库状态不一致。
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 帮我为文生图 MVP 写 Brief。请先问我必须确认的范围问题。
 ```
 
-## Stage 2: PRD / BDD
+## 阶段 2：PRD / BDD
 
-### What It Does
+### 做什么
 
-PRD / BDD turns natural language into behavior:
+PRD / BDD 把自然语言转成可验证行为：
 
-- User flow.
-- Success scenarios.
-- Failure scenarios.
-- Edge cases.
-- Given / When / Then scenarios.
-- Open questions.
+- 用户流程。
+- 成功场景。
+- 失败场景。
+- 边界场景。
+- Given / When / Then 场景。
+- 未确认问题。
 
-### Why It Exists
+### 为什么做
 
-Natural language requirements are often ambiguous. BDD makes behavior testable and reviewable. It also gives the agent a precise target before implementation.
+自然语言需求经常含糊。BDD 让行为变得可测试、可审查，也让 Agent 在实现前有明确目标。
 
-### Example
+### 示例
 
 ```gherkin
-Feature: Text-to-image generation
+Feature: 文生图
 
-Scenario: User generates one image successfully
-  Given the user submits a valid prompt
-  When the image generation job completes successfully
-  Then the job status should be succeeded
-  And the generated image URL should be saved
+Scenario: 用户成功生成一张图片
+  Given 用户提交了有效提示词
+  When 图片生成任务成功完成
+  Then 任务状态应为 succeeded
+  And 生成图片 URL 应被保存
 
-Scenario: OpenAI image generation fails
-  Given the user submits a valid prompt
-  When the OpenAI image API returns an error
-  Then the job status should be failed
-  And the failure stage should be openai_generation
-  And an error_code should be recorded
-  And debug_artifacts should include the provider response summary
+Scenario: OpenAI 图片生成失败
+  Given 用户提交了有效提示词
+  When OpenAI 图片 API 返回错误
+  Then 任务状态应为 failed
+  And failure stage 应为 openai_generation
+  And 应记录 error_code
+  And debug_artifacts 应包含 provider response summary
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 把这个需求转成 BDD。不要替我拍板业务规则，把需要确认的问题列出来。
 ```
 
-## Stage 3: Test Strategy / Architecture Decision
+## 阶段 3：Test Strategy / Architecture Decision
 
-### What It Does
+### 做什么
 
-This stage defines how the behavior will be proven and how the system will be shaped.
+这个阶段定义如何证明行为正确，以及系统结构如何组织。
 
-Test Strategy decides:
+Test Strategy 决定：
 
-- P0 tests: must pass before release.
-- P1 tests: important failure and edge coverage.
-- P2 tests: useful but deferrable.
-- Unit / integration / e2e / regression split.
-- Test data and fixtures.
+- P0 测试：发布前必须通过。
+- P1 测试：重要边界和失败覆盖。
+- P2 测试：有价值但可后置。
+- 单测 / 集成测试 / E2E / 回归测试怎么分。
+- 测试数据和 fixtures。
 
-Architecture Decision decides:
+Architecture Decision 决定：
 
-- Modules.
-- Data flow.
-- Dependency direction.
-- State and storage.
-- External dependency boundaries.
-- Tradeoffs.
+- 模块边界。
+- 数据流。
+- 依赖方向。
+- 状态和存储。
+- 外部依赖边界。
+- 取舍。
 
-### Why It Exists
+### 为什么做
 
-Tests make requirements executable. Architecture decisions prevent the agent from scattering logic across unrelated files. This stage also tells the agent what must be verified before code is considered done.
+测试让需求变成可执行证据。架构决策避免 Agent 把逻辑散落到无关文件里。这个阶段也告诉 Agent：什么被验证过，代码才算完成。
 
-### Example
+### 示例
 
 ```md
 ## P0 Tests
 
-- Valid prompt creates a succeeded job with one image URL.
-- OpenAI failure marks the job failed with stage=openai_generation.
-- Image save failure marks the job failed with stage=image_persistence.
+- 有效提示词创建 succeeded 任务，并保存一张图片 URL。
+- OpenAI 失败时任务 failed，stage=openai_generation。
+- 图片保存失败时任务 failed，stage=image_persistence。
 
 ## P1 Tests
 
-- Empty prompt is rejected before calling OpenAI.
-- OpenAI returns an empty image list.
-- Database write fails after provider success.
+- 空提示词在调用 OpenAI 前被拒绝。
+- OpenAI 返回空图片列表。
+- provider 成功后数据库写入失败。
 
 ## Test Type Split
 
@@ -229,19 +231,19 @@ Regression:
 - provider returns success response with empty images array
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 基于这个 BDD 生成 Test Strategy，区分 P0/P1/P2，并说明哪些应该是单测、集成测试、回归测试。
 ```
 
-## Stage 4: Observability
+## 阶段 4：Observability
 
-Observability can be part of Architecture Decision, but for async jobs, external APIs, image generation, database writes, and long-running workflows, it should be explicit.
+Observability 可以属于 Architecture Decision，但对异步任务、外部 API、图片生成、数据库写入、长流程任务，应该单独明确。
 
-### What It Does
+### 做什么
 
-It defines:
+定义：
 
 - `job_id`
 - `stage`
@@ -249,17 +251,17 @@ It defines:
 - `error_code`
 - `debug_artifacts`
 
-### Why It Exists
+### 为什么做
 
-When production fails, you need to locate the failure quickly. Logs are not just text output; they are debugging evidence. ClearFlow asks:
+线上失败时，你需要快速定位问题。日志不是“多打印点信息”，而是 debug 证据。ClearFlow 会问：
 
 ```text
-If this fails in production, what must we know within 3 minutes?
+如果这个功能线上失败，3 分钟内我们必须知道什么？
 ```
 
-Then it designs logs backwards from that question.
+然后从这个问题反推日志和调试产物设计。
 
-### Example
+### 示例
 
 ```md
 ## Stages
@@ -272,42 +274,42 @@ Then it designs logs backwards from that question.
 | database_write | generation.db_write.started | generation.db_write.succeeded | generation.db_write.failed | DB_WRITE_FAILED | job_id, intended state |
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 带我为这个异步图片生成流程设计 Observability，重点是 stage、event、error_code 和 debug_artifacts。
 ```
 
-## Stage 5: Plan / Task Handoff
+## 阶段 5：Plan / Task Handoff
 
-### What It Does
+### 做什么
 
-Plan / Task Handoff converts confirmed workflow artifacts into input for a detailed implementation plan.
+Plan / Task Handoff 把已确认的工作流产物转成详细实现计划的输入。
 
-It includes:
+它包含：
 
-- Goal.
-- Scope / non-scope.
-- Confirmed BDD scenarios.
-- P0 / P1 / P2 tests.
-- Architecture decisions.
-- Observability requirements.
-- Regression rules.
-- User-confirmed decisions.
-- Known files or modules.
+- Goal。
+- Scope / non-scope。
+- 已确认 BDD 场景。
+- P0 / P1 / P2 测试。
+- 架构决策。
+- 可观测性要求。
+- 回归规则。
+- 用户已确认决策。
+- 已知文件或模块。
 
-### Why It Exists
+### 为什么做
 
-ClearFlow does not try to duplicate superpowers `writing-plans`. Superpowers plans are more detailed and closer to code-level task execution. ClearFlow's handoff tells superpowers what must be preserved: behavior, tests, architecture, logs, and regression rules.
+ClearFlow 不重复 superpowers `writing-plans`。superpowers plan 更细，更接近代码级执行。ClearFlow 的 handoff 告诉 superpowers 必须保留什么：行为、测试、架构、日志和回归规则。
 
-### Example
+### 示例
 
 ```md
-# Plan / Task Handoff: Text-to-Image MVP
+# Plan / Task Handoff: 文生图 MVP
 
 ## Goal
 
-Implement one-image text generation with reliable failure localization.
+实现单图文生图，并能可靠定位失败阶段。
 
 ## Scope / Non-Scope
 
@@ -340,108 +342,108 @@ Non-scope:
 Use this document plus Brief, PRD/BDD, Test Strategy, and Architecture Decision to create a file-level implementation plan with failing tests, commands, and expected results.
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 基于已确认的 Brief、BDD、测试策略和架构决策，生成 Plan / Task Handoff，准备交给 superpowers writing-plans。
 ```
 
-## Stage 6: superpowers Implementation Plan
+## 阶段 6：superpowers Implementation Plan
 
-### What It Does
+### 做什么
 
-This optional stage hands the ClearFlow artifacts to superpowers `writing-plans`, which can produce a fine-grained implementation plan.
+这个可选阶段把 ClearFlow 产物交给 superpowers `writing-plans`，生成更细的实现计划。
 
-Superpowers plans usually include:
+superpowers plan 通常包括：
 
-- Exact files to create or modify.
-- Failing tests.
-- Minimal implementation steps.
-- Commands to run.
-- Expected test output.
-- Commit-sized tasks.
+- 要创建或修改的准确文件。
+- 失败测试。
+- 最小实现步骤。
+- 要运行的命令。
+- 预期测试输出。
+- commit 粒度任务。
 
-### Why It Exists
+### 为什么做
 
-ClearFlow defines what must be true. Superpowers defines exactly how to implement it step by step. Keeping these separate prevents duplicate planning and makes both workflows stronger.
+ClearFlow 定义“什么必须成立”。superpowers 定义“如何一步一步实现”。分开这两层，可以避免重复计划，并让两个工作流互相增强。
 
-Prompt:
+提示词：
 
 ```text
 Use superpowers writing-plans with this Plan / Task Handoff and the referenced ClearFlow artifacts.
 Create a detailed implementation plan.
 ```
 
-## Stage 7: Implementation
+## 阶段 7：Implementation
 
-### What It Does
+### 做什么
 
-Implementation follows the Plan / Task Handoff or the superpowers implementation plan.
+Implementation 按 Plan / Task Handoff 或 superpowers implementation plan 执行。
 
-Rules:
+规则：
 
-- New behavior should have tests.
-- Complex logic should use TDD.
-- Bug fixes should reproduce first and add regression coverage when practical.
-- Logs should identify the failing stage in multi-step workflows.
+- 新行为应该有测试。
+- 复杂逻辑应该用 TDD。
+- Bug 修复应先复现，并在可行时加入回归覆盖。
+- 多阶段流程的日志应该能定位失败 stage。
 
-### Why It Exists
+### 为什么做
 
-Implementation is where the code changes, but it should not invent scope or silently change behavior. The earlier artifacts provide constraints and evidence.
+Implementation 是实际改代码的阶段，但它不能自己发明范围，也不能悄悄改变行为。前面的产物提供约束和证据。
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 进入 Implementation 阶段。请先读取 Plan / Task Handoff、Test Strategy 和 Observability，再说明将执行哪个最小任务。
 ```
 
-## Stage 8: Pre-PR Review
+## 阶段 8：Pre-PR Review
 
-### What It Does
+### 做什么
 
-Pre-PR Review checks the change against ClearFlow, not only code style.
+Pre-PR Review 按 ClearFlow 检查改动，而不只是看代码风格。
 
-It verifies:
+它验证：
 
-- Scope fulfilled.
-- Non-scope not accidentally implemented.
-- BDD scenarios covered.
-- P0 tests present and passing.
-- Architecture decisions respected.
-- Logs can locate failures by stage.
-- Relevant error codes and debug artifacts exist.
-- Regression cases captured for fixed bugs.
-- Progress is updated.
+- Scope 是否完成。
+- Non-scope 是否被误做。
+- BDD 场景是否覆盖。
+- P0 测试是否存在并通过。
+- 架构决策是否被遵守。
+- 日志是否能按 stage 定位失败。
+- 相关 error_code 和 debug_artifacts 是否存在。
+- 修复过的 Bug 是否沉淀为回归用例。
+- Progress 是否更新。
 
-### Why It Exists
+### 为什么做
 
-A feature can look correct but still be hard to debug or unsafe to change later. Pre-PR Review catches missing tests, missing logs, hidden scope creep, and missing regression capture before the work is merged.
+一个功能可能“看起来能跑”，但仍然难以 debug，或者以后很容易改坏。Pre-PR Review 在合并前捕获缺失测试、缺失日志、范围蔓延和未沉淀回归。
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 对当前 diff 做 Pre-PR Review，重点检查范围、BDD、P0 测试、日志定位、回归用例和 Progress。
 ```
 
-## Stage 9: Regression Capture
+## 阶段 9：Regression Capture
 
-### What It Does
+### 做什么
 
-For bugs, Regression Capture turns the failure into a reusable asset.
+对 Bug，Regression Capture 把一次失败转成可复用资产。
 
-It records:
+它记录：
 
-- Reproduction data.
-- Failing stage.
-- Test or fixture added.
-- Regression rule.
-- Related error code or debug artifact.
+- 复现数据。
+- 失败 stage。
+- 新增或更新的测试 / fixture。
+- 回归规则。
+- 相关 error_code 或 debug artifact。
 
-### Why It Exists
+### 为什么做
 
-Fixing a bug without capturing a regression test means the same bug can return. Regression Capture converts a one-time failure into a permanent guardrail.
+修 Bug 但不沉淀回归测试，意味着同类 Bug 可能再次回来。Regression Capture 把一次失败变成长期护栏。
 
-### Example
+### 示例
 
 ```md
 ## Regression Rule
@@ -454,41 +456,41 @@ When OpenAI returns a successful response with an empty images array:
 - system must not save an empty image URL
 ```
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 这是刚修复的 bug，请帮我做 Regression Capture：复现数据、失败 stage、回归测试位置、Regression rule。
 ```
 
-## Stage 10: Progress
+## 阶段 10：Progress
 
-### What It Does
+### 做什么
 
-Progress records enough context for recovery.
+Progress 记录足够恢复上下文的信息。
 
-It includes:
+它包括：
 
-- Completed work.
-- Confirmed decisions.
-- Existing tests.
-- Regression cases.
-- Observability status.
-- Gaps and blockers.
-- Next smallest task.
+- 已完成工作。
+- 已确认决策。
+- 现有测试。
+- 回归用例。
+- 可观测性状态。
+- 缺口和阻塞。
+- 下一个最小任务。
 
-### Why It Exists
+### 为什么做
 
-Progress lets another session or agent continue without rediscovering everything. It is the recovery context for long-running work.
+Progress 让另一个会话或另一个 Agent 可以继续做，不必重新发现所有上下文。它是长任务的恢复上下文。
 
-Prompt:
+提示词：
 
 ```text
 $clearflow 更新 Progress，记录已完成内容、已确认决策、测试资产、回归 case、日志缺口和下一步最小任务。
 ```
 
-## Recommended Repository Files
+## 推荐项目文件
 
-For durable project workflows, ClearFlow uses:
+如果项目需要长期保存 ClearFlow 产物，推荐使用：
 
 ```text
 docs/workflow/WORKFLOW.md
@@ -504,11 +506,11 @@ tests/regression/
 tests/fixtures/
 ```
 
-`docs/workflow/WORKFLOW.md` is the index. Agents should read it first when working on structured workflow tasks.
+`docs/workflow/WORKFLOW.md` 是索引。Agent 在处理结构化工作流任务时应该先读取它。
 
-## Optional AGENTS.md Rule
+## 可选 AGENTS.md 规则
 
-If a repository uses durable ClearFlow artifacts, add a short navigation rule to its `AGENTS.md`:
+如果仓库使用长期保存的 ClearFlow 产物，可以在仓库级 `AGENTS.md` 加一个简短导航规则：
 
 ```md
 ## Workflow Artifacts
@@ -531,58 +533,58 @@ Workflow artifacts and superpowers plans serve different purposes:
 - `docs/superpowers/plans/` contains detailed implementation plans for execution.
 ```
 
-## Common Usage Prompts
+## 常用提示词
 
-Start a feature:
+开始新功能：
 
 ```text
 $clearflow 带我从 Brief 开始规划这个功能：...
 ```
 
-Convert requirements to BDD:
+需求转 BDD：
 
 ```text
 $clearflow 把下面自然语言需求转成 PRD / BDD，并列出需要我确认的问题：...
 ```
 
-Generate test strategy:
+生成测试策略：
 
 ```text
 $clearflow 基于这个 PRD / BDD 生成 Test Strategy，区分 P0/P1/P2，并建议测试类型和测试数据。
 ```
 
-Design observability:
+设计可观测性：
 
 ```text
 $clearflow 帮我设计这个流程的 job_id、stage、event、error_code、debug_artifacts。
 ```
 
-Prepare superpowers handoff:
+准备 superpowers 交接：
 
 ```text
 $clearflow 生成 Plan / Task Handoff，准备交给 superpowers writing-plans。
 ```
 
-Review before PR:
+PR 前审查：
 
 ```text
 $clearflow 对当前 diff 做 Pre-PR Review。
 ```
 
-Capture regression:
+沉淀回归：
 
 ```text
 $clearflow 根据这个 bug 修复生成 Regression Capture 和 Progress 更新。
 ```
 
-## Design Boundary
+## 设计边界
 
-ClearFlow should stay narrow:
+ClearFlow 应该保持窄边界：
 
-- It guides the workflow.
-- It helps structure decisions.
-- It prepares artifacts.
-- It checks tests, observability, regression, and progress.
-- It does not replace project instructions.
-- It does not replace superpowers detailed implementation plans.
-- It does not force heavy process for small tasks.
+- 它引导流程。
+- 它帮助结构化决策。
+- 它准备工作流产物。
+- 它检查测试、可观测性、回归和进度。
+- 它不替代项目说明。
+- 它不替代 superpowers 的详细实现计划。
+- 它不为小任务强行套重流程。
