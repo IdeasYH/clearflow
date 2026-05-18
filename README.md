@@ -21,9 +21,10 @@ ClearFlow 不是编码能力、项目说明或 superpowers 的替代品。它是
 - 从清晰范围开始规划新功能。
 - 把自然语言需求转换成 PRD / BDD。
 - 生成 P0 / P1 / P2 测试策略。
+- 使用测试策略审查、单元测试审查和发布验收审查来查缺补漏。
 - 在实现前设计日志和 debug artifacts。
 - 为 superpowers 的详细实现计划准备交接材料。
-- 在 PR 前从范围、测试、日志和回归角度审查 diff。
+- 在 PR 前从范围、测试、日志和回归角度审查 diff，并在发布前判断是否可交付给用户。
 - 用复现、回归测试和进度恢复来修 Bug。
 
 示例：
@@ -47,10 +48,12 @@ $clearflow 把下面这个需求转成 PRD / BDD，并生成测试策略：
 1. Brief
 2. PRD / BDD
 3. Test Strategy / Architecture Decision
-4. Plan / Task Handoff
-5. superpowers Implementation Plan
-6. Implementation
-7. Pre-PR Review / Regression Capture / Progress
+4. Test Strategy Review, when risk justifies it
+5. Plan / Task Handoff
+6. superpowers Implementation Plan
+7. Implementation
+8. Unit Test Review, when unit-test changes are risk-relevant
+9. Pre-PR Review / Acceptance Review / Regression Capture / Progress
 ```
 
 Bug 修复流程：
@@ -58,9 +61,11 @@ Bug 修复流程：
 ```text
 1. Brief
 2. Test Strategy
-3. Implementation
-4. Regression Capture
-5. Progress
+3. Test Strategy Review, when the bug caused production failure or is regression-prone
+4. Implementation
+5. Unit Test Review, when unit-test changes are risk-relevant
+6. Regression Capture
+7. Progress
 ```
 
 复杂项目可以展开组合阶段：
@@ -69,13 +74,16 @@ Bug 修复流程：
 1. Brief
 2. PRD / BDD
 3. Test Strategy
-4. Architecture Decision
-5. Plan / Task Handoff
-6. superpowers Implementation Plan
-7. Implementation
-8. Pre-PR Review
-9. Regression Capture
-10. Progress
+4. Test Strategy Review, normally included unless the user chooses a lightweight path
+5. Architecture Decision
+6. Plan / Task Handoff
+7. superpowers Implementation Plan
+8. Implementation
+9. Unit Test Review
+10. Pre-PR Review
+11. Acceptance Review
+12. Regression Capture
+13. Progress
 ```
 
 ## 阶段 1：Brief
@@ -237,6 +245,51 @@ Regression:
 $clearflow 基于这个 BDD 生成 Test Strategy，区分 P0/P1/P2，并说明哪些应该是单测、集成测试、回归测试。
 ```
 
+## Review Agents
+
+ClearFlow 可以在风险足够高时启用有边界的审查 Agent。它们默认是顾问，只能指出缺口、风险和开放问题，不能给实现步骤，也不能接管修复。
+
+只有这些问题默认阻塞：
+
+- P0 行为缺口。
+- 安全风险。
+- 数据风险。
+- 生产故障风险。
+- 用户明确接受为阻塞条件的问题。
+
+P1 / P2 缺口默认记录为 follow-up，除非它暴露 P0、安全或数据风险。
+
+### Test Strategy Review Agent
+
+审查测试策略是否漏掉关键行为和风险：
+
+- PRD / BDD 中的 P0 行为是否都有测试证据。
+- 是否过度依赖 E2E，而没有用单测或集成测试定位失败。
+- 是否漏掉失败路径、权限、数据完整性、并发、幂等或回滚。
+- fixture 和测试数据是否真实。
+- 哪些回归候选应该升级为必测。
+
+### Unit Test Review Agent
+
+审查单元测试是否可信，而不是重新实现功能：
+
+- 是否验证行为和业务价值，而不是私有实现细节。
+- 是否覆盖 Test Strategy 分配给 unit 层的 P0 / P1。
+- 断言是否足够强，不只是 smoke test 或宽泛快照。
+- mock / stub 是否让测试失真。
+- 异步、定时器、全局状态、fixture 清理是否稳定。
+
+### Acceptance Review Agent
+
+Acceptance Review 不是普通 PR 合并检查。它用于发布前判断是否可以交付给用户，重点审查证据包：
+
+- 交付边界是否明确：staging release、production release 或 user handoff。
+- Brief、BDD、Test Strategy、Architecture Decision、Observability 是否都有对应验证证据。
+- P0 测试是否存在、有效、通过，并绑定到已确认行为。
+- 生产失败是否能按约定 stage 定位。
+- 已修 bug 是否有回归覆盖和回归规则。
+- 跳过的检查、人工验证、环境和已知限制是否记录。
+
 ## 阶段 4：Observability
 
 Observability 可以属于 Architecture Decision，但对异步任务、外部 API、图片生成、数据库写入、长流程任务，应该单独明确。
@@ -285,6 +338,8 @@ $clearflow 带我为这个异步图片生成流程设计 Observability，重点�
 ### 做什么
 
 Plan / Task Handoff 把已确认的工作流产物转成详细实现计划的输入。
+
+它是 ClearFlow 的交接产物，不是详细 implementation plan。ClearFlow 不定义 superpowers plan 的内部格式，也不修改 superpowers 的计划规则。
 
 它包含：
 
@@ -501,12 +556,22 @@ docs/workflow/<feature-id>/architecture-decision.md
 docs/workflow/<feature-id>/observability.md
 docs/workflow/<feature-id>/plan-task-handoff.md
 docs/workflow/<feature-id>/pre-pr-review.md
+docs/workflow/<feature-id>/acceptance-review.md
 docs/workflow/<feature-id>/progress.md
 tests/regression/
 tests/fixtures/
 ```
 
 `docs/workflow/WORKFLOW.md` 是索引。Agent 在处理结构化工作流任务时应该先读取它。
+
+文件名是推荐，不是硬性要求。如果项目已有其他命名习惯，按以下顺序识别 ClearFlow 产物：
+
+1. `docs/workflow/WORKFLOW.md` 中的链接。
+2. 一级标题，例如 `# Test Strategy: <feature>`。
+3. 模板中的必需章节。
+4. 可选 frontmatter，例如 `artifact_type: test-strategy`。
+
+这些识别规则只适用于 ClearFlow 产物，不改变 superpowers 的 plan 文件或格式。
 
 ## 可选 AGENTS.md 规则
 

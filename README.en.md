@@ -19,9 +19,10 @@ Use ClearFlow when you want to:
 - Start a new feature with clear scope.
 - Convert natural language requirements into PRD / BDD.
 - Generate P0 / P1 / P2 test strategy.
+- Use test strategy review, unit test review, and release acceptance review to find gaps.
 - Design logs and debug artifacts before implementation.
 - Prepare a handoff for a detailed superpowers implementation plan.
-- Review a diff before PR with scope, tests, logs, and regression in mind.
+- Review a diff before PR with scope, tests, logs, and regression in mind, and decide before release whether the work can be delivered to users.
 - Fix bugs with reproduction, regression tests, and progress recovery.
 
 Example:
@@ -45,10 +46,12 @@ Default feature workflow:
 1. Brief
 2. PRD / BDD
 3. Test Strategy / Architecture Decision
-4. Plan / Task Handoff
-5. superpowers Implementation Plan
-6. Implementation
-7. Pre-PR Review / Regression Capture / Progress
+4. Test Strategy Review, when risk justifies it
+5. Plan / Task Handoff
+6. superpowers Implementation Plan
+7. Implementation
+8. Unit Test Review, when unit-test changes are risk-relevant
+9. Pre-PR Review / Acceptance Review / Regression Capture / Progress
 ```
 
 Bug fix workflow:
@@ -56,9 +59,11 @@ Bug fix workflow:
 ```text
 1. Brief
 2. Test Strategy
-3. Implementation
-4. Regression Capture
-5. Progress
+3. Test Strategy Review, when the bug caused production failure or is regression-prone
+4. Implementation
+5. Unit Test Review, when unit-test changes are risk-relevant
+6. Regression Capture
+7. Progress
 ```
 
 For complex projects, ClearFlow can expand the combined stages:
@@ -67,13 +72,16 @@ For complex projects, ClearFlow can expand the combined stages:
 1. Brief
 2. PRD / BDD
 3. Test Strategy
-4. Architecture Decision
-5. Plan / Task Handoff
-6. superpowers Implementation Plan
-7. Implementation
-8. Pre-PR Review
-9. Regression Capture
-10. Progress
+4. Test Strategy Review, normally included unless the user chooses a lightweight path
+5. Architecture Decision
+6. Plan / Task Handoff
+7. superpowers Implementation Plan
+8. Implementation
+9. Unit Test Review
+10. Pre-PR Review
+11. Acceptance Review
+12. Regression Capture
+13. Progress
 ```
 
 ## Stage 1: Brief
@@ -235,6 +243,51 @@ Prompt:
 $clearflow 基于这个 BDD 生成 Test Strategy，区分 P0/P1/P2，并说明哪些应该是单测、集成测试、回归测试。
 ```
 
+## Review Agents
+
+ClearFlow can use bounded review agents when risk justifies the extra pass. They are advisory by default: they may identify gaps, risks, and open questions, but they must not prescribe implementation steps or take over fixes.
+
+Only these issues block by default:
+
+- P0 behavior gaps.
+- Security risk.
+- Data risk.
+- Production-failure risk.
+- Issues the user explicitly accepts as blocking criteria.
+
+P1 / P2 gaps are recorded as follow-ups by default unless they reveal P0, security, or data risk.
+
+### Test Strategy Review Agent
+
+Reviews whether the test strategy misses critical behavior or risk:
+
+- P0 behavior from PRD / BDD has test evidence.
+- The plan does not over-rely on E2E when unit or integration tests would localize failures better.
+- Failure paths, permissions, data integrity, concurrency, idempotency, and rollback are considered.
+- Fixtures and test data are realistic.
+- Regression candidates that should become required tests are identified.
+
+### Unit Test Review Agent
+
+Reviews whether unit tests are trustworthy without reimplementing the feature:
+
+- Tests assert behavior and business value, not private implementation details.
+- Unit-level P0 / P1 coverage assigned by the Test Strategy is present.
+- Assertions are strong enough to fail on broken behavior, not only smoke checks or broad snapshots.
+- Mocks and stubs do not make the tests dishonest.
+- Async work, timers, global state, and fixture cleanup are deterministic.
+
+### Acceptance Review Agent
+
+Acceptance Review is not a normal PR merge check. It decides before release whether the work can be delivered to users by reviewing the evidence package:
+
+- The delivery boundary is clear: staging release, production release, or user handoff.
+- Brief, BDD, Test Strategy, Architecture Decision, and Observability have corresponding verification evidence.
+- P0 tests are present, meaningful, passing, and tied to accepted behavior.
+- Production failures can be localized by the agreed stage.
+- Fixed bugs have regression coverage and regression rules.
+- Skipped checks, manual verification, environments, and known limitations are recorded.
+
 ## Stage 4: Observability
 
 Observability can be part of Architecture Decision, but for async jobs, external APIs, image generation, database writes, and long-running workflows, it should be explicit.
@@ -283,6 +336,8 @@ $clearflow 带我为这个异步图片生成流程设计 Observability，重点�
 ### What It Does
 
 Plan / Task Handoff converts confirmed workflow artifacts into input for a detailed implementation plan.
+
+It is a ClearFlow handoff artifact, not the detailed implementation plan. ClearFlow does not define the internal format of superpowers plans or modify superpowers planning rules.
 
 It includes:
 
@@ -499,12 +554,22 @@ docs/workflow/<feature-id>/architecture-decision.md
 docs/workflow/<feature-id>/observability.md
 docs/workflow/<feature-id>/plan-task-handoff.md
 docs/workflow/<feature-id>/pre-pr-review.md
+docs/workflow/<feature-id>/acceptance-review.md
 docs/workflow/<feature-id>/progress.md
 tests/regression/
 tests/fixtures/
 ```
 
 `docs/workflow/WORKFLOW.md` is the index. Agents should read it first when working on structured workflow tasks.
+
+Filenames are recommended, not mandatory. If a project already has another naming convention, identify ClearFlow artifacts in this order:
+
+1. Links in `docs/workflow/WORKFLOW.md`.
+2. Top-level heading, for example `# Test Strategy: <feature>`.
+3. Required template sections.
+4. Optional frontmatter, for example `artifact_type: test-strategy`.
+
+These identity rules apply only to ClearFlow artifacts. They do not change superpowers plan files or formats.
 
 ## Optional AGENTS.md Rule
 

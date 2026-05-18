@@ -1,6 +1,6 @@
 ---
 name: clearflow
-description: Use when the user explicitly asks to use ClearFlow, their structured development workflow, Brief/PRD/BDD process, Test Strategy, Architecture Decision, Plan/Task Handoff, Pre-PR Review, Regression Capture, Progress recovery, or to guide a project through this workflow. Do not use for ordinary coding tasks unless the user explicitly asks for ClearFlow or this workflow.
+description: Use when the user explicitly asks to use ClearFlow, their structured development workflow, Brief/PRD/BDD process, Test Strategy, Test Strategy Review Agent, Unit Test Review Agent, Acceptance Review Agent, Architecture Decision, Plan/Task Handoff, Pre-PR Review, Regression Capture, Progress recovery, or to guide a project through this workflow. Do not use for ordinary coding tasks unless the user explicitly asks for ClearFlow or this workflow.
 ---
 
 # ClearFlow
@@ -16,7 +16,8 @@ Core idea:
 - Use this skill only when the user explicitly asks for this workflow or one of its named stages.
 - Do not force the full workflow for ordinary small changes.
 - Do not override AGENTS.md, project conventions, or direct user instructions.
-- Do not auto-enable multi-agent work, long-running loops, or external-model workflows.
+- Do not auto-enable open-ended multi-agent work, long-running loops, or external-model workflows.
+- Do not require review agents for ordinary small changes; scale review depth to risk, behavior surface, and release impact.
 - Do not duplicate superpowers implementation planning. Use this workflow to prepare better inputs for superpowers when available.
 
 ## Relationship With Superpowers
@@ -24,6 +25,10 @@ Core idea:
 This workflow owns product behavior, test strategy, architecture decisions, observability, regression capture, and progress recovery.
 
 Superpowers, when available and requested or appropriate, owns brainstorming discipline, TDD discipline, systematic debugging, detailed implementation plans, plan execution, code review, and branch finishing.
+
+ClearFlow may request bounded review-agent passes for test strategy, unit tests, and acceptance readiness. These agents are independent reviewers with narrow prompts and explicit outputs, not owners of implementation. Use them when available and when the task is complex, risky, user-facing, security/data-sensitive, regression-prone, or when the user asks for extra confidence. If subagents are unavailable, perform the same review as checklist sections in the main session.
+
+Review agents are advisory by default. They may block only for P0 behavior gaps, security risk, data risk, production-failure risk, or user-accepted blocking criteria. They must identify gaps, risks, and open questions; they must not prescribe implementation steps or take over fixes.
 
 Recommended handoff:
 
@@ -42,31 +47,38 @@ Use this default sequence for feature work:
 1. Brief
 2. PRD / BDD
 3. Test Strategy / Architecture Decision
-4. Plan / Task Handoff
-5. superpowers Implementation Plan
-6. Implementation
-7. Pre-PR Review / Regression Capture / Progress
+4. Test Strategy Review, when risk justifies it
+5. Plan / Task Handoff
+6. superpowers Implementation Plan
+7. Implementation
+8. Unit Test Review, when unit-test changes are risk-relevant
+9. Pre-PR Review / Acceptance Review / Regression Capture / Progress
 
 For bug fixes, use the shorter sequence:
 
 1. Brief
 2. Test Strategy
-3. Implementation
-4. Regression Capture
-5. Progress
+3. Test Strategy Review, when the bug caused production failure or is regression-prone
+4. Implementation
+5. Unit Test Review, when unit-test changes are risk-relevant
+6. Regression Capture
+7. Progress
 
 For complex, risky, or multi-stage projects, expand the combined stages into:
 
 1. Brief
 2. PRD / BDD
 3. Test Strategy
-4. Architecture Decision
-5. Plan / Task Handoff
-6. superpowers Implementation Plan
-7. Implementation
-8. Pre-PR Review
-9. Regression Capture
-10. Progress
+4. Test Strategy Review, normally included unless the user chooses a lightweight path
+5. Architecture Decision
+6. Plan / Task Handoff
+7. superpowers Implementation Plan
+8. Implementation
+9. Unit Test Review
+10. Pre-PR Review
+11. Acceptance Review
+12. Regression Capture
+13. Progress
 
 ## Guided Mode
 
@@ -84,10 +96,13 @@ Stop for user confirmation at these points:
 - Brief scope and non-scope
 - PRD / BDD behavior rules
 - P0 test coverage
+- Test Strategy Review result when used
 - Architecture direction
 - Observability requirements for failure localization
 - Plan / Task Handoff before generating a detailed superpowers plan
+- Unit Test Review result when it identifies blocking gaps
 - Pre-PR Review result before merge or release
+- Acceptance Review result before release on complex or high-risk work
 
 ## Artifact Discovery
 
@@ -112,12 +127,22 @@ docs/workflow/<feature-id>/architecture-decision.md
 docs/workflow/<feature-id>/observability.md
 docs/workflow/<feature-id>/plan-task-handoff.md
 docs/workflow/<feature-id>/pre-pr-review.md
+docs/workflow/<feature-id>/acceptance-review.md
 docs/workflow/<feature-id>/progress.md
 tests/regression/
 tests/fixtures/
 ```
 
 Use the repository's existing documentation and test layout if it already has a clear convention.
+
+Artifact filenames are recommended, not mandatory. When existing repositories use different names, identify ClearFlow artifacts by this priority:
+
+1. Links in `docs/workflow/WORKFLOW.md`.
+2. Top-level heading, for example `# Test Strategy: <feature>`.
+3. Required template sections.
+4. Optional frontmatter such as `artifact_type: test-strategy`.
+
+When creating new durable ClearFlow artifacts, use the recommended filenames unless the repository already has a clear convention. These rules apply only to ClearFlow artifacts; do not change or redefine superpowers plan files or formats.
 
 ## Stage Responsibilities
 
@@ -158,9 +183,28 @@ Generate and help the user choose:
 
 For complex logic, prefer TDD. For bug fixes, reproduce first and capture a failing regression test when practical. For existing behavior changes, protect old behavior with tests before modifying it.
 
+Use a Test Strategy Review Agent when the test plan is high impact or uncertain. Ask it to check for:
+
+- Missing P0 behavior from PRD / BDD.
+- Overreliance on E2E where unit or integration tests would localize failures better.
+- Missing failure, permission, data integrity, concurrency, idempotency, or rollback cases.
+- Missing fixtures or unrealistic test data.
+- Regression candidates that should be promoted to required tests.
+
+The review output must be concise:
+
+- Decision: Pass / Needs revision / Blocked pending user decision.
+- Blocking gaps.
+- Suggested P0 / P1 / P2 changes.
+- Test type split corrections.
+- Open questions requiring user decision.
+
+Do not let the reviewer invent business requirements. It may only identify gaps, assumptions, and test coverage risks.
+P1/P2 suggestions are advisory and may be recorded as follow-ups unless the user explicitly promotes them or they reveal a P0, security, or data risk.
+
 ### Plan / Task Handoff
 
-This is not a detailed code execution plan. It is the structured input for superpowers `writing-plans`.
+This is not a detailed code execution plan. It is a ClearFlow handoff artifact: structured input for superpowers `writing-plans` or the currently available detailed planning workflow. ClearFlow does not define the internal format of the downstream implementation plan.
 
 Include:
 
@@ -187,6 +231,20 @@ Implementation must keep tests and observability aligned:
 - Bug fixes should include regression coverage when practical.
 - Logs should identify the failing stage in multi-step workflows.
 
+Use a Unit Test Review Agent when unit tests are added or changed for complex logic, critical behavior, production-failure fixes, regression bugs, or shared modules. Ask it to inspect the tests, not reimplement the feature. It should check:
+
+- Tests assert behavior and business value, not private implementation details.
+- Required unit-level P0/P1 coverage from the Test Strategy is present.
+- Assertions are strong enough to fail on broken behavior, not only smoke checks or broad snapshots.
+- Core branches, boundary values, parameter combinations, and error paths assigned to unit tests are covered.
+- Tests would fail for the original bug or likely regression.
+- Mocks and stubs do not make the test dishonest.
+- Test names, fixtures, setup, and teardown make failures diagnosable and isolated.
+- Async tests await the real work and do not leave hanging timers, unhandled promises, or hidden races.
+- Tests are deterministic and do not depend on timing, order, network, or hidden global state unless explicitly controlled.
+
+The reviewer should not require new unit tests when the Test Strategy intentionally assigns the behavior to integration, e2e, or manual verification. Treat missing required P0 coverage assigned to unit tests by the Test Strategy, security/data risk in test coverage, non-deterministic tests, or tests that cannot fail for the intended behavior as blocking until addressed or explicitly accepted by the user. P1/P2 gaps should be recorded as follow-ups unless they expose P0, security, or data risk.
+
 ### Pre-PR Review
 
 Review against the workflow, not only code style:
@@ -202,6 +260,23 @@ Review against the workflow, not only code style:
 - Progress is updated
 
 Use superpowers code review when available for code-level review, then apply this workflow review for product/test/observability/regression coverage.
+
+Use an Acceptance Review Agent before release for complex, high-risk, user-facing, or multi-stage work. It decides whether the work can be released or delivered to users, not merely whether a PR can be merged. Give it the Brief, PRD / BDD, Test Strategy, Architecture Decision, Observability requirements, implementation summary, verification results, regression status, and progress status. Ask it to decide whether the work is releasable from a workflow perspective by reviewing evidence, not redoing implementation.
+
+The Acceptance Review Agent must check:
+
+- The delivery boundary is clear: PR merge, staging release, production release, or user handoff.
+- Scope is fulfilled and non-scope was not accidentally implemented.
+- Confirmed BDD scenarios have implementation and verification evidence.
+- P0 tests are present, meaningful, passing, and tied to accepted behavior.
+- Architecture decisions and dependency direction are respected, or deviations are documented and accepted.
+- Required observability can localize failures by stage within the agreed diagnostic window.
+- Fixed bugs have regression coverage and recorded regression rules.
+- Verification commands, manual checks, skipped checks, environments, and known limitations are recorded.
+- Remaining gaps are classified as blocking, accepted risk, or follow-up with owner or next action.
+
+If the acceptance review finds blocking gaps, update the Plan / Task Handoff or Progress with the next smallest task before continuing.
+If it finds only P1/P2 gaps without P0, security, or data risk, record them as follow-ups and allow release when the user accepts the residual risk.
 
 ### Regression Capture / Progress
 

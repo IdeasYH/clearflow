@@ -102,6 +102,35 @@ Regression:
 ## Regression Candidates
 
 -
+
+## Test Strategy Review
+
+Use a bounded review-agent pass when risk justifies it.
+
+Reviewer Input:
+- Brief:
+- PRD / BDD:
+- Test Strategy:
+- Architecture context:
+- Risk rationale:
+
+Decision:
+-
+
+Blocking Gaps:
+-
+
+P0 / P1 / P2 Changes:
+-
+
+Follow-ups Allowed:
+- P1/P2 gaps without P0, security, or data risk:
+
+Test Type Split Corrections:
+-
+
+Open Questions:
+-
 ```
 
 ## Architecture Decision
@@ -169,6 +198,8 @@ debug_artifacts:
 ```md
 # Plan / Task Handoff: <feature>
 
+This is a ClearFlow handoff artifact, not the detailed implementation plan.
+
 ## Goal
 
 -
@@ -187,6 +218,11 @@ Non-scope:
 P0:
 P1:
 P2:
+
+Review agents, if used:
+- Test Strategy Review: Used / Not used / N/A; reason:
+- Unit Test Review: Used / Not used / N/A; reason:
+- Acceptance Review: Used / Not used / N/A; reason:
 
 ## Architecture Decisions
 
@@ -227,6 +263,8 @@ Use this document plus the referenced workflow artifacts to create a detailed im
 
 - [ ] BDD scenarios covered
 - [ ] P0 tests present and passing
+- [ ] Test Strategy Review blocking gaps resolved or accepted
+- [ ] Unit Test Review blocking gaps resolved or accepted
 
 ## Architecture Check
 
@@ -244,11 +282,55 @@ Use this document plus the referenced workflow artifacts to create a detailed im
 - [ ] Fixed bugs have regression coverage
 - [ ] Regression rules updated
 
+## Acceptance Review Summary
+
+- [ ] Scope, BDD, tests, architecture, observability, and regression status reviewed
+- [ ] Blocking gaps resolved or explicitly accepted
+- [ ] Follow-ups recorded
+
 ## Result
 
 Decision:
 Blocking issues:
 Follow-ups:
+```
+
+## Acceptance Review
+
+```md
+# Acceptance Review: <feature>
+
+## Delivery Boundary
+
+Staging release / production release / user handoff:
+
+## Evidence Reviewed
+
+- Brief:
+- PRD / BDD:
+- Test Strategy:
+- Architecture Decision:
+- Observability:
+- Implementation Summary:
+- Verification Results:
+- Regression / Progress:
+
+## Evidence Gaps
+
+- Missing verification commands:
+- Missing manual checks:
+- Skipped checks and reasons:
+- Unknown environment or data assumptions:
+
+## Result
+
+Decision: Release / Do not release / Needs user decision
+Blocking gaps:
+Only P0, security, data, production-failure, or user-accepted blocking criteria should block.
+Accepted risks:
+Follow-ups:
+P1/P2 gaps without P0, security, or data risk may be accepted as follow-ups.
+User decisions needed:
 ```
 
 ## Progress
