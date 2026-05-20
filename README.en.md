@@ -154,6 +154,26 @@ PRD / BDD turns natural language into behavior:
 
 ClearFlow includes a built-in PRD draft assistant. When standard product-requirements documentation is needed, use it directly inside the PRD / BDD stage; it does not depend on a separately installed `prd-writer` / `PRD-Writer` skill. It only helps structure PRD content; it does not replace ClearFlow confirmation, BDD scenarios, test strategy, architecture handoff, or release evidence.
 
+### PRD Draft Assistant
+
+What it does:
+
+- Turns the Brief, raw user notes, business context, and constraints into a standard PRD draft.
+- Fills the basic PRD structure first: problem / goal, users / personas, scope, non-scope, requirements, user flow, success scenarios, failure scenarios, edge cases, and open questions.
+- Marks uncertain content as assumptions or questions instead of turning it into confirmed rules.
+
+Why it exists:
+
+- Early requirements are often fragmented. Going straight to BDD can miss why the feature exists, who it serves, what is in scope, and what is out of scope.
+- The PRD draft clarifies product meaning before ClearFlow confirmation and BDD conversion, reducing silent business-rule invention by the agent.
+- It separates document drafting from behavior acceptance: PRD explains product intent, while BDD verifies confirmed behavior.
+
+What it improves:
+
+- The user can review a fuller PRD draft before answering scattered requirement questions.
+- BDD scenarios come from confirmed PRD behavior, making the later Test Strategy easier to trace back to real requirements.
+- Plan / Task Handoff gets clearer scope, non-scope, and open questions, reducing implementation-stage omissions, overreach, and accidental scope expansion.
+
 ### Why It Exists
 
 Natural language requirements are often ambiguous. BDD makes behavior testable and reviewable. It also gives the agent a precise target before implementation.
