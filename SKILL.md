@@ -162,6 +162,7 @@ Use superpowers brainstorming if the user wants deeper requirement discovery.
 
 Convert natural language into:
 
+- PRD draft, when the user wants a standard product-requirements document
 - User flow
 - Success scenarios
 - Failure scenarios
@@ -169,7 +170,10 @@ Convert natural language into:
 - Given / When / Then scenarios
 - Open questions
 
+If a `prd-writer` / `PRD-Writer` skill is installed or explicitly provided, use it only as a drafting helper for the PRD sections. ClearFlow remains authoritative for workflow stage boundaries, user confirmation, BDD scenarios, test strategy, architecture handoff, and release evidence.
+
 Do not invent business rules silently. Mark assumptions and ask the user to confirm them.
+Do not let a PRD-writing helper overwrite ClearFlow's required BDD or testing responsibilities. Convert confirmed PRD behavior into Given / When / Then scenarios before moving to Test Strategy.
 
 ### Test Strategy / Architecture Decision
 

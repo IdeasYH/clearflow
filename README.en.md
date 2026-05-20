@@ -144,6 +144,7 @@ $clearflow 帮我为文生图 MVP 写 Brief。请先问我必须确认的范围�
 
 PRD / BDD turns natural language into behavior:
 
+- Standard PRD draft, when the user needs product-requirements documentation first.
 - User flow.
 - Success scenarios.
 - Failure scenarios.
@@ -151,9 +152,13 @@ PRD / BDD turns natural language into behavior:
 - Given / When / Then scenarios.
 - Open questions.
 
+If a `prd-writer` / `PRD-Writer` skill is installed or explicitly provided, ClearFlow may use it as a PRD drafting helper. It only helps structure PRD content; it does not replace ClearFlow confirmation, BDD scenarios, test strategy, architecture handoff, or release evidence.
+
 ### Why It Exists
 
 Natural language requirements are often ambiguous. BDD makes behavior testable and reviewable. It also gives the agent a precise target before implementation.
+
+PRD explains why the feature exists, who it serves, what is in scope, and what is out of scope. BDD converts confirmed PRD behavior into testable acceptance scenarios. They do not conflict; PRD-Writer can draft the PRD, but it must not skip BDD.
 
 ### Example
 

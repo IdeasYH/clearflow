@@ -33,6 +33,30 @@ Use these templates as compact artifacts. Do not fill sections with speculation.
 ````md
 # PRD / BDD: <feature>
 
+## PRD Draft Source
+
+ClearFlow native / PRD-Writer assisted / Existing PRD:
+
+## Problem / Goal
+
+-
+
+## Users / Personas
+
+-
+
+## Scope
+
+-
+
+## Non-Scope
+
+-
+
+## Requirements
+
+-
+
 ## User Flow
 
 1.
