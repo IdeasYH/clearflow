@@ -154,7 +154,7 @@ PRD / BDD 把自然语言转成可验证行为：
 - Given / When / Then 场景。
 - 未确认问题。
 
-如果已安装或明确提供 `prd-writer` / `PRD-Writer` skill，ClearFlow 可以把它作为 PRD 草稿助手使用。它只负责辅助整理 PRD 内容，不替代 ClearFlow 的确认流程、BDD 场景、测试策略、架构交接和发布证据。
+ClearFlow 内置 PRD 草稿助手；需要标准产品需求文档时，直接在 PRD / BDD 阶段使用它整理 PRD 内容，不依赖额外安装 `prd-writer` / `PRD-Writer` skill。它只负责辅助整理 PRD 内容，不替代 ClearFlow 的确认流程、BDD 场景、测试策略、架构交接和发布证据。
 
 ### 为什么做
 

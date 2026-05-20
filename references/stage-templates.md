@@ -35,7 +35,7 @@ Use these templates as compact artifacts. Do not fill sections with speculation.
 
 ## PRD Draft Source
 
-ClearFlow native / PRD-Writer assisted / Existing PRD:
+ClearFlow native / ClearFlow PRD draft assistant / Existing PRD:
 
 ## Problem / Goal
 

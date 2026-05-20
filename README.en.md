@@ -152,7 +152,7 @@ PRD / BDD turns natural language into behavior:
 - Given / When / Then scenarios.
 - Open questions.
 
-If a `prd-writer` / `PRD-Writer` skill is installed or explicitly provided, ClearFlow may use it as a PRD drafting helper. It only helps structure PRD content; it does not replace ClearFlow confirmation, BDD scenarios, test strategy, architecture handoff, or release evidence.
+ClearFlow includes a built-in PRD draft assistant. When standard product-requirements documentation is needed, use it directly inside the PRD / BDD stage; it does not depend on a separately installed `prd-writer` / `PRD-Writer` skill. It only helps structure PRD content; it does not replace ClearFlow confirmation, BDD scenarios, test strategy, architecture handoff, or release evidence.
 
 ### Why It Exists
 
